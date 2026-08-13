@@ -1,0 +1,11 @@
+{
+  "name": "Petualangan 7 Kebiasaan",
+  "short_name": "7 Kebiasaan",
+  "description": "Habit Tracker 7 Kebiasaan Indonesia Hebat untuk siswa SD.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f6f7fc",
+  "theme_color": "#4f46e5",
+  "icons": []
+}
