@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <base target="_top">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Habit Tracker 7 Kebiasaan Indonesia Hebat untuk siswa SD.">
+  <meta name="theme-color" content="#4f46e5">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9A%80%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="assets/css/styles.css" rel="stylesheet">
+  <title>Petualangan 7 Kebiasaan</title>
+</head>
+<body>
+  <iframe id="gasBridge" class="api-bridge" title="Koneksi database" tabindex="-1" aria-hidden="true"></iframe>
+  <div id="loadingOverlay" class="loading-overlay d-none" aria-live="polite" aria-busy="true">
+    <div class="loading-card text-center">
+      <div class="orbit-loader mb-3"><span>⭐</span></div>
+      <strong id="loadingText">Sedang memuat petualangan...</strong>
+      <small class="d-block text-secondary mt-1">Tunggu sebentar, ya.</small>
+    </div>
+  </div>
+
+  <div id="toastArea" class="toast-container position-fixed top-0 end-0 p-3"></div>
+
+  <main id="loginScreen" class="login-screen container-fluid">
+    <div class="row min-vh-100">
+      <section class="col-lg-6 hero-panel d-flex align-items-center">
+        <div class="hero-content mx-auto">
+          <div class="brand-bubble mb-4">🌟</div>
+          <p class="hero-kicker">JURNAL HARIAN SISWA HEBAT</p>
+          <h1>Petualangan<br><span>7 Kebiasaan</span></h1>
+          <p class="hero-copy">Selesaikan kebiasaan baikmu setiap hari, nyalakan api streak, dan tumbuh menjadi versi terbaik dirimu!</p>
+          <div class="habit-orbit" aria-hidden="true">
+            <span>🌅</span><span>🙏</span><span>⚽</span><span>🥗</span><span>📚</span><span>🤝</span><span>🌙</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="col-lg-6 login-panel d-flex align-items-center">
+        <div class="login-card mx-auto w-100">
+          <div class="text-center mb-4">
+            <div class="mini-logo">🚀</div>
+            <h2 class="mt-3 mb-1">Ayo Mulai!</h2>
+            <p class="text-secondary">Pilih cara masuk sesuai peranmu</p>
+          </div>
+
+          <ul class="nav nav-pills nav-fill role-tabs mb-4" id="loginTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#studentLoginPane" type="button">🎒 Siswa</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" data-bs-toggle="pill" data-bs-target="#staffLoginPane" type="button">🧑‍🏫 Guru / Admin</button>
+            </li>
+          </ul>
+
+          <div class="tab-content">
+            <div class="tab-pane fade show active" id="studentLoginPane">
+              <form id="studentLoginForm" novalidate>
+                <label class="form-label" for="loginClass">Kelas</label>
+                <select id="loginClass" class="form-select form-select-lg mb-3" required>
+                  <option value="">Pilih kelasmu...</option>
+                </select>
+                <label class="form-label" for="loginStudent">Nama siswa</label>
+                <select id="loginStudent" class="form-select form-select-lg mb-4" required disabled>
+                  <option value="">Pilih namamu...</option>
+                </select>
+                <button class="btn btn-primary btn-lg w-100 adventure-btn" type="submit">
+                  Mulai Petualangan <i class="bi bi-arrow-right-circle ms-1"></i>
+                </button>
+              </form>
+            </div>
+
+            <div class="tab-pane fade" id="staffLoginPane">
+              <form id="staffLoginForm" novalidate>
+                <label class="form-label" for="loginUsername">Username</label>
+                <div class="input-group input-group-lg mb-3">
+                  <span class="input-group-text"><i class="bi bi-person"></i></span>
+                  <input id="loginUsername" class="form-control" autocomplete="username" required placeholder="Masukkan username">
+                </div>
+                <label class="form-label" for="loginPassword">Password</label>
+                <div class="input-group input-group-lg mb-4">
+                  <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                  <input id="loginPassword" type="password" class="form-control" autocomplete="current-password" required placeholder="Masukkan password">
+                  <button id="togglePassword" class="btn btn-outline-secondary" type="button" aria-label="Lihat password"><i class="bi bi-eye"></i></button>
+                </div>
+                <button class="btn btn-primary btn-lg w-100 adventure-btn" type="submit">
+                  Masuk Dashboard <i class="bi bi-box-arrow-in-right ms-1"></i>
+                </button>
+              </form>
+            </div>
+          </div>
+          <p class="login-help text-center mt-4 mb-0"><i class="bi bi-shield-check"></i> Data jurnalmu tersimpan dengan aman.</p>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div id="appShell" class="d-none">
+    <nav class="navbar navbar-expand-lg app-navbar sticky-top">
+      <div class="container-xl">
+        <a class="navbar-brand d-flex align-items-center gap-2" href="#" id="homeLink">
+          <span class="navbar-logo">🚀</span>
+          <span>7 Kebiasaan</span>
+        </a>
+        <div class="d-flex align-items-center gap-2 ms-auto">
+          <span id="navIdentity" class="nav-identity d-none d-md-inline"></span>
+          <button id="logoutBtn" class="btn btn-light btn-sm rounded-pill px-3"><i class="bi bi-box-arrow-right"></i> Keluar</button>
+        </div>
+      </div>
+    </nav>
+
+    <section id="studentView" class="d-none page-section">
+      <div class="container-xl py-4 py-lg-5">
+        <div class="student-welcome mb-4">
+          <div>
+            <p class="eyebrow mb-1">SELAMAT DATANG, PAHLAWAN KEBIASAAN!</p>
+            <h2 id="studentGreeting" class="mb-1">Halo!</h2>
+            <p id="studentClass" class="mb-0 opacity-75"></p>
+          </div>
+          <div class="streak-card">
+            <span class="fire-icon">🔥</span>
+            <div><strong id="studentStreak">0</strong><small>hari streak</small></div>
+          </div>
+        </div>
+
+        <div class="row g-4">
+          <div class="col-xl-5">
+            <article class="panel-card h-100">
+              <div class="panel-heading">
+                <div><span class="section-icon purple">📅</span><div><h3>Kalender Kebiasaan</h3><p>Klik tanggal untuk melihat atau mengisi jurnal.</p></div></div>
+                <input id="studentMonth" class="form-control month-control" type="month">
+              </div>
+              <div id="studentCalendar" class="habit-calendar"></div>
+              <div class="calendar-legend">
+                <span><i class="dot complete"></i> Lengkap</span>
+                <span><i class="dot partial"></i> Belum lengkap</span>
+                <span><i class="dot empty"></i> Belum diisi</span>
+              </div>
+            </article>
+          </div>
+
+          <div class="col-xl-7">
+            <article class="panel-card journal-panel">
+              <div class="panel-heading align-items-start">
+                <div><span class="section-icon orange">✍️</span><div><h3>Jurnal Harianku</h3><p>Centang kebiasaan dan ceritakan pengalamanmu.</p></div></div>
+                <input id="journalDate" class="form-control date-control" type="date">
+              </div>
+              <form id="habitForm">
+                <div id="habitList" class="habit-list"></div>
+                <div class="journal-actions">
+                  <div id="habitProgressText" class="progress-caption">0 dari 7 kebiasaan selesai</div>
+                  <button class="btn btn-success btn-lg save-journal-btn" type="submit"><i class="bi bi-stars"></i> Simpan Jurnal</button>
+                </div>
+              </form>
+            </article>
+          </div>
+        </div>
+
+        <div class="text-end mt-3">
+          <button id="studentPdfBtn" class="btn btn-outline-primary rounded-pill"><i class="bi bi-file-earmark-pdf"></i> Unduh Rekap Bulan Ini</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="staffView" class="d-none page-section">
+      <div class="container-xl py-4 py-lg-5">
+        <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-end gap-3 mb-4">
+          <div>
+            <p class="eyebrow text-primary mb-1">PUSAT PEMANTAUAN</p>
+            <h2 class="page-title mb-1">Dashboard <span id="staffRole">Guru</span></h2>
+            <p class="text-secondary mb-0">Pantau konsistensi kebiasaan baik seluruh siswa.</p>
+          </div>
+          <div class="filter-bar">
+            <select id="monitorClass" class="form-select"></select>
+            <input id="monitorMonth" class="form-control" type="month">
+            <button id="classPdfBtn" class="btn btn-primary text-nowrap"><i class="bi bi-file-earmark-pdf"></i> PDF Kelas</button>
+          </div>
+        </div>
+
+        <div class="row g-3 mb-4" id="monitorStats">
+          <div class="col-6 col-lg-3"><div class="stat-card indigo"><span>👧</span><div><strong id="statStudents">0</strong><small>Siswa dipantau</small></div></div></div>
+          <div class="col-6 col-lg-3"><div class="stat-card green"><span>✅</span><div><strong id="statComplete">0</strong><small>Hari lengkap</small></div></div></div>
+          <div class="col-6 col-lg-3"><div class="stat-card orange"><span>📈</span><div><strong id="statCompliance">0%</strong><small>Kepatuhan</small></div></div></div>
+          <div class="col-6 col-lg-3"><div class="stat-card pink"><span>🗓️</span><div><strong id="statDays">0</strong><small>Hari berjalan</small></div></div></div>
+        </div>
+
+        <article class="panel-card mb-4">
+          <div class="panel-heading">
+            <div><span class="section-icon green">📊</span><div><h3>Rangkuman Siswa</h3><p>Klik nama untuk membuka kalender dan jurnal.</p></div></div>
+            <div class="search-box"><i class="bi bi-search"></i><input id="studentSearch" placeholder="Cari siswa..."></div>
+          </div>
+          <div class="table-responsive">
+            <table class="table align-middle monitor-table mb-0">
+              <thead><tr><th>Nama siswa</th><th>Terisi</th><th>Hari lengkap</th><th>Streak terbaik</th><th>Kepatuhan</th><th class="text-end">Aksi</th></tr></thead>
+              <tbody id="monitorTableBody"></tbody>
+            </table>
+          </div>
+          <div id="monitorEmpty" class="empty-state d-none"><span>🔎</span><p>Belum ada data siswa yang cocok.</p></div>
+        </article>
+
+        <article id="monitorCalendarPanel" class="panel-card d-none">
+          <div class="panel-heading">
+            <div><span class="section-icon orange">🗓️</span><div><h3 id="monitorStudentName">Kalender Siswa</h3><p id="monitorStudentMeta"></p></div></div>
+            <button id="selectedStudentPdfBtn" class="btn btn-outline-primary btn-sm rounded-pill"><i class="bi bi-file-earmark-pdf"></i> PDF Siswa</button>
+          </div>
+          <div class="row g-4">
+            <div class="col-lg-6"><div id="monitorCalendar" class="habit-calendar"></div></div>
+            <div class="col-lg-6"><div id="monitorJournalDetail" class="journal-detail"><div class="empty-state"><span>👆</span><p>Klik tanggal berwarna untuk melihat rincian jurnal.</p></div></div></div>
+          </div>
+        </article>
+
+        <section id="adminSection" class="d-none mt-4">
+          <div class="admin-header mb-3">
+            <div><p class="eyebrow text-primary mb-1">KHUSUS ADMIN</p><h2 class="h3 mb-0">Kelola Data</h2></div>
+            <button id="refreshAdminBtn" class="btn btn-light rounded-pill"><i class="bi bi-arrow-clockwise"></i> Muat ulang</button>
+          </div>
+          <ul class="nav nav-pills admin-tabs mb-3">
+            <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#studentsAdminPane">Data Siswa</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#usersAdminPane">Akun Guru & Admin</button></li>
+          </ul>
+          <div class="tab-content">
+            <div class="tab-pane fade show active" id="studentsAdminPane">
+              <div class="row g-4">
+                <div class="col-lg-4">
+                  <form id="studentAdminForm" class="panel-card sticky-lg-top admin-form-card">
+                    <h3 id="studentFormTitle">Tambah Siswa</h3>
+                    <input id="adminStudentId" type="hidden">
+                    <label class="form-label" for="adminStudentName">Nama siswa</label>
+                    <input id="adminStudentName" class="form-control mb-3" maxlength="150" required>
+                    <label class="form-label" for="adminStudentClass">Kelas</label>
+                    <input id="adminStudentClass" class="form-control mb-3" maxlength="100" list="classSuggestions" required placeholder="Contoh: 4A">
+                    <datalist id="classSuggestions"></datalist>
+                    <div class="d-flex gap-2"><button class="btn btn-primary flex-grow-1" type="submit">Simpan</button><button id="cancelStudentEdit" class="btn btn-light d-none" type="button">Batal</button></div>
+                  </form>
+                </div>
+                <div class="col-lg-8">
+                  <div class="panel-card">
+                    <div class="table-responsive"><table class="table align-middle mb-0"><thead><tr><th>Nama</th><th>Kelas</th><th class="text-end">Aksi</th></tr></thead><tbody id="adminStudentsBody"></tbody></table></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="tab-pane fade" id="usersAdminPane">
+              <div class="row g-4">
+                <div class="col-lg-4">
+                  <form id="userAdminForm" class="panel-card sticky-lg-top admin-form-card">
+                    <h3 id="userFormTitle">Tambah Akun</h3>
+                    <input id="adminUserId" type="hidden">
+                    <label class="form-label" for="adminUsername">Username</label>
+                    <input id="adminUsername" class="form-control mb-3" maxlength="100" required>
+                    <label class="form-label" for="adminRole">Role</label>
+                    <select id="adminRole" class="form-select mb-3" required><option value="Guru">Guru</option><option value="Admin">Admin</option></select>
+                    <div id="classAccessGroup">
+                      <label class="form-label" for="adminClassAccess">Kelas akses</label>
+                      <select id="adminClassAccess" class="form-select mb-3"></select>
+                    </div>
+                    <label class="form-label" for="adminPassword">Password</label>
+                    <input id="adminPassword" type="password" class="form-control mb-1" minlength="8" autocomplete="new-password">
+                    <small class="text-secondary d-block mb-3">Minimal 8 karakter. Kosongkan saat mengedit bila tidak diubah.</small>
+                    <div class="d-flex gap-2"><button class="btn btn-primary flex-grow-1" type="submit">Simpan</button><button id="cancelUserEdit" class="btn btn-light d-none" type="button">Batal</button></div>
+                  </form>
+                </div>
+                <div class="col-lg-8">
+                  <div class="panel-card">
+                    <div class="table-responsive"><table class="table align-middle mb-0"><thead><tr><th>Username</th><th>Role</th><th>Akses</th><th class="text-end">Aksi</th></tr></thead><tbody id="adminUsersBody"></tbody></table></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+  </div>
+
+  <div class="modal fade" id="celebrationModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content celebration-modal text-center">
+        <div class="modal-body p-5">
+          <div class="celebration-emoji">🏆</div>
+          <h2>Luar Biasa!</h2>
+          <p id="celebrationMessage">Tujuh kebiasaanmu hari ini sudah lengkap.</p>
+          <div class="celebration-streak"><span>🔥</span> <strong id="celebrationStreak">1</strong> hari streak</div>
+          <button class="btn btn-primary btn-lg rounded-pill mt-4" data-bs-dismiss="modal">Lanjutkan Petualangan!</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/bridge-client.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
